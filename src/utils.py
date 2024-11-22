@@ -1,5 +1,5 @@
 import re
-import datetime
+from datetime import datetime
 
 # Validate the receipt data based on api.yaml
 #  - retailer
@@ -25,9 +25,9 @@ def validate_receipt(receipt_data):
     return True
 
 # Validate receipt retailer data based on api.yaml
-# "^[\\w\\s\\-&]+$"
+# "^[\w\s\-&]+$"
 def validate_receipt_retailer(retailer):
-    if not re.match(r"^[\\w\\s\\-&]+$", retailer):
+    if not re.match(r"^[\w\s\-&]+$", retailer):
         return False
     return True
 
@@ -58,9 +58,9 @@ def validate_receipt_items(items):
     return True
 
 # Validate receipt retailer data based on api.yaml
-# "^\\d+\\.\\d{2}$"
+# "^\d+\.\d{2}$"
 def validate_receipt_total(total):
-    if not re.match(r"^\\d+\\.\\d{2}$", total):
+    if not re.match(r"^\d+\.\d{2}$", total):
         return False
     return True
 
@@ -75,7 +75,14 @@ def calculate_points(receipt_data):
     points += calculate_points_total_amount(receipt_data["total"])
     # 5 points for every two items on the receipt
     points += (len(receipt_data['items']) // 2) * 5
+    # points generated from receipt item description
+    points += calculate_points_item_description(receipt_data["items"])
+    # 6 points if the day in the purchase date is odd
+    points += calculate_points_purchase_date(receipt_data["purchaseDate"])
+    # 10 points if the time of purchase is after 2:00pm and before 4:00pm
+    points += calculate_points_purchase_time(receipt_data["purchaseTime"])
 
+    return points
 
 def calculate_points_total_amount(total):
     points = 0
@@ -98,3 +105,23 @@ def calculate_points_item_description(items):
         if len(item['shortDescription']) % 3 == 0:
             points += int(float(item['price']) * 0.2)
     return points
+
+def calculate_points_purchase_date(purchase_date):
+    # checking if the purchase date is odd
+    try: 
+        day = datetime.strptime(purchase_date, "%Y-%m-%d").day
+        if day % 2 != 0:
+            return 6
+    except ValueError:
+        pass
+    return 0
+
+def calculate_points_purchase_time(purchase_time):
+    # checking if the purchase time is between 2-4pm
+    try:
+        time = datetime.strptime(purchase_time, "%H:%M").time()
+        if 14 <= time.hour < 16:
+            return 10
+    except ValueError:
+        pass
+    return 0

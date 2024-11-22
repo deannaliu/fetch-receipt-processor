@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 import uuid # a python library which helps in generating random objects of 128 bits as ids.
 
 from utils import validate_receipt
+from utils import calculate_points
 
 # command: python app.py
 app = Flask(__name__)
@@ -18,7 +19,6 @@ receipts = {} # dictionary to hold the receipts
 def process_receipt():
     data = request.json
     
-
     # check if recipt is valid
     is_receipt_valid = validate_receipt(data)
 
@@ -34,7 +34,7 @@ def process_receipt():
 # Route decorator in Flask
 # Route: /receipts/process
 # HTTP method: GET endpoint to get points for a given receipt
-@app.route('/receipts/process', methods=['GET'])
+@app.route('/receipts/<receipt_id>/points', methods=['GET'])
 def get_points(receipt_id):
     if receipt_id not in receipts:
         return jsonify({"error": "no receipt found for that id"}), 404
