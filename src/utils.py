@@ -1,4 +1,5 @@
 import re
+import math
 from datetime import datetime
 
 # Validate the receipt data based on api.yaml
@@ -70,11 +71,11 @@ def calculate_points(receipt_data):
     points = 0
 
     # 1 point for every alphanumeric character in the retailer name
-    points += sum(c.isalnum() for c in receipt_data['retailer'])
+    points += calculate_points_retailer(receipt_data["retailer"])
     # points generated from receipt total dollar amount
     points += calculate_points_total_amount(receipt_data["total"])
     # 5 points for every two items on the receipt
-    points += (len(receipt_data['items']) // 2) * 5
+    points += calculate_points_items_amount(receipt_data["items"])
     # points generated from receipt item description
     points += calculate_points_item_description(receipt_data["items"])
     # 6 points if the day in the purchase date is odd
@@ -83,6 +84,9 @@ def calculate_points(receipt_data):
     points += calculate_points_purchase_time(receipt_data["purchaseTime"])
 
     return points
+
+def calculate_points_retailer(retailer):
+    return sum(c.isalnum() for c in retailer)
 
 def calculate_points_total_amount(total):
     points = 0
@@ -97,13 +101,16 @@ def calculate_points_total_amount(total):
     
     return points
 
+def calculate_points_items_amount(items):
+    return (len(items) // 2) * 5
+
 def calculate_points_item_description(items):
     # if the trimmed length of the item description is a multiple of 3, multiply the price by 0.2 and round up to the nearest integer. 
     points = 0
 
     for item in items:
-        if len(item['shortDescription']) % 3 == 0:
-            points += int(float(item['price']) * 0.2)
+        if len(item['shortDescription'].strip()) % 3 == 0:
+            points += math.ceil(float(item['price']) * 0.2)
     return points
 
 def calculate_points_purchase_date(purchase_date):
