@@ -1,0 +1,9 @@
+{
+    "retailer": "7@Eleven",
+    "purchaseDate": "2022-13-20",
+    "purchaseTime": "28:30",
+    "total": "12345",
+    "items": [
+        {"shortDescription": "Beef#Jerky", "price": "2.25"}
+    ]
+}

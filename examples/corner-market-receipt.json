@@ -4,7 +4,7 @@
     "purchaseTime": "14:33",
     "total": "9.00",
     "items": [
-        { "shortDescription": "Gatorade", "price": "2.25"},
+        {"shortDescription": "Gatorade", "price": "2.25"},
         {"shortDescription": "Gatorade", "price": "2.25"},
         {"shortDescription": "Gatorade", "price": "2.25"},
         {"shortDescription": "Gatorade", "price": "2.25"}

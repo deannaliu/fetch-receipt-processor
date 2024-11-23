@@ -28,13 +28,15 @@ def validate_receipt(receipt_data):
 # Validate receipt retailer data based on api.yaml
 # "^[\w\s\-&]+$"
 def validate_receipt_retailer(retailer):
-    if not re.match(r"^[\w\s\-&]+$", retailer):
+    if not isinstance(retailer, str) or not re.match(r"^[\w\s\-&]+$", retailer):
         return False
     return True
 
 # Validate receipt retailer data based on api.yaml
 # "YYYY-MM-DD" & Valid Date
 def validate_receipt_purchase_date(purchase_date):
+    if not isinstance(purchase_date, str):
+        return False
     try:
         datetime.strptime(purchase_date, "%Y-%m-%d")
     except ValueError:
@@ -44,6 +46,8 @@ def validate_receipt_purchase_date(purchase_date):
 # Validate receipt retailer data based on api.yaml
 # "HH:MM" 24Hr
 def validate_receipt_purchase_time(purchase_time):
+    if not isinstance(purchase_time, str):
+        return False
     try:
         datetime.strptime(purchase_time, "%H:%M")
     except ValueError:
@@ -56,15 +60,31 @@ def validate_receipt_purchase_time(purchase_time):
 def validate_receipt_items(items):
     if not isinstance(items, list) or len(items) < 1:
         return False
+    
+    for item in items:
+        if not validate_receipt_item_properties(item):
+            return False
+    return True
+
+def validate_receipt_item_properties(item):
+    if not isinstance(item, dict) or "shortDescription" not in item or "price" not in item:
+        return False
+    if not isinstance(item["shortDescription"], str) or not isinstance(item["price"], str):
+        return False
+    
+    if not re.match(r"^[\w\s\-]+$", item["shortDescription"]):
+        return False
+    if not re.match(r"^\d+\.\d{2}$", item["price"]):
+        return False
+    
     return True
 
 # Validate receipt retailer data based on api.yaml
 # "^\d+\.\d{2}$"
 def validate_receipt_total(total):
-    if not re.match(r"^\d+\.\d{2}$", total):
+    if not isinstance(total, str) or not re.match(r"^\d+\.\d{2}$", total):
         return False
     return True
-
 
 # Calculate Points for Receipt
 def calculate_points(receipt_data):
