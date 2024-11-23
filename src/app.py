@@ -19,12 +19,10 @@ receipts = {} # dictionary to hold the receipts
 def process_receipt():
     data = request.json
     
-    # check if recipt is valid
     is_receipt_valid = validate_receipt(data)
 
     if not is_receipt_valid:
         return jsonify({"error": "no receipt found for that id"}), 400
-    # calculate the points
 
     receipt_id = str(uuid.uuid4())
     receipt_points = calculate_points(data)
