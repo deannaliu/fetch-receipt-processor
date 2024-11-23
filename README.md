@@ -2,22 +2,27 @@
 
 Related Challenge Link: https://github.com/fetch-rewards/receipt-processor-challenge/blob/main/README.md
 
-### Python
-
+### Docker
 
 ```
-python app.py
+docker build -t deannaliu/fetch-receipt-processor .
+docker run -p 5000:5000 deannaliu/fetch-receipt-processor
+```
+
+### Python
+
+```
 
 curl -X POST http://127.0.0.1:5000/receipts/process -H "Content-Type: application/json" --data "@../examples/target-receipt.json
 
 curl -X GET http://127.0.0.1:5000/receipts/4a4f8e1e-bdaf-450f-82f4-3827e3aedb0d/points
 ```
 
-Example Result:
+### Example Result:
 ```
-{ "id": "4a4f8e1e-bdaf-450f-82f4-3827e3aedb0d" }
+POST: { "id": "4a4f8e1e-bdaf-450f-82f4-3827e3aedb0d" }
 
-{ "points": 28 }
+GET: { "points": 28 }
 ```
 
 ## Summary of API Specification
